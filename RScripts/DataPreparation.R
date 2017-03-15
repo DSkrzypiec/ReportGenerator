@@ -19,7 +19,7 @@ create_dataPreparation <- function()
     
     
     # ----------------------------------------
-    # Private function for data reaading
+    # Private function for data reading
     # ----------------------------------------
     
     .readRubiksCubeFinals <- function()
@@ -43,18 +43,12 @@ create_dataPreparation <- function()
     
     
     
-    # ----------------------------------------
-    # Reading main data
-    # ----------------------------------------
-    
-    dataPreparation$RubiksCubeFinals <- .readRubiksCubeFinals()
-
     
     # ----------------------------------------
-    # Public method for parse date
+    # Private function for date parsing
     # ----------------------------------------
     
-    dataPreparation$ParseDate <- function(dateString)
+    .parseDate <- function(dateString)
     {
         if (!is.character(dateString))
             stop("[dataPreparation.ParseDate] Given argument has invalid type - string expected.")
@@ -64,6 +58,35 @@ create_dataPreparation <- function()
         year <- parts[length(parts)]
         return(paste0(month, "-", year))
     }
+    
+    
+    
+    # ----------------------------------------
+    # Reading main data
+    # ----------------------------------------
+    
+    dataPreparation$RubiksCubeFinals <- .readRubiksCubeFinals()
+    
+    
+    
+    # ----------------------------------------
+    # Public properties of countries and dates
+    # ----------------------------------------
+    
+    dataPreparation$CompetitionDates        <- unique(
+                                                       sapply(X   = dataPreparation$RubiksCubeFinals$Date,
+                                                              FUN = .parseDate
+                                                              )
+                                                      ) 
+    
+    dataPreparation$CompetitionCountries    <- unique(dataPreparation$RubiksCubeFinals$Country)
+    
+    
+    # ----------------------------------------
+    # Public method for parse date
+    # ----------------------------------------
+    
+    dataPreparation$ParseDate <- .parseDate
         
         
     return(dataPreparation)    

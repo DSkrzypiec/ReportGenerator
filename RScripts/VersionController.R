@@ -38,6 +38,7 @@ create_VersionController <- function()
             logger <- data.frame(Id                 = integer(0),
                                  ReportDate         = character(0), 
                                  ReportCountry      = character(0),
+                                 ReportId           = integer(0),
                                  Timestamp          = character(0),
                                  Comment            = character(0),
                                  stringsAsFactors = FALSE
@@ -72,18 +73,21 @@ create_VersionController <- function()
     {
         if (!is.character(ReportDate) || !is.character(ReportCountry) || !is.character(Comment))
             stop("All given arguments should be characters.")
-
+        
         # Reading current Log
         Log         <- versionController$ReadLog()
         newId       <- c(Log$Id, ifelse(nrow(Log) == 0, 1, max(Log$Id) + 1))
         rDate       <- c(Log$ReportDate, ReportDate)
         rCountry    <- c(Log$ReportCountry, ReportCountry)
+        reportIds   <- Log$ReportId[Log$ReportDate == ReportDate & Log$ReportCountry == ReportCountry]
+        reportId    <- c(Log$ReportId, ifelse(length(reportIds) == 0, 1, max(reportIds) + 1))
         tstamp      <- c(Log$Timestamp, format(Sys.time(), "%Y-%m-%d %H:%m:%S"))
         comm        <- c(Log$Comment, Comment)
 
         newLogger <- data.frame(Id              = newId,
                                 ReportDate      = rDate,
                                 ReportCountry   = rCountry,
+                                ReportId        = reportId,
                                 Timestamp       = tstamp,
                                 Comment         = comm,
                                 stringsAsFactors = FALSE
