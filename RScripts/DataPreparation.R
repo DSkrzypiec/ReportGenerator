@@ -88,7 +88,71 @@ create_dataPreparation <- function()
     
     dataPreparation$ParseDate <- .parseDate
         
+    
+    
+    # ----------------------------------------
+    # Public method for filtering competitions
+    # ----------------------------------------
+    
+    dataPreparation$FilterCompetitions <- function(competitionDate, competitionCountry)
+    {
+        if (!is.character(competitionDate))
+            stop("Invalid type of argument <competitionDate>. Character expected.")
         
+        if (!is.character(competitionCountry))
+            stop("Invalid type of argument <competitionCountry>. Character expected.")
+        
+        if (!competitionDate %in% dataPreparation$CompetitionDates)
+            warning("Given competitionDate does not exists in history data.")
+        
+        if (!competitionCountry %in% dataPreparation$CompetitionCountries)
+            warning("Given competitionCountry does not exists in history data.")
+        
+        # Filtering data
+        competitionsInfo <- dataPreparation$RubiksCubeFinals %>%
+                                    dplyr::filter(Country == competitionCountry) %>%
+                                    as.data.frame()
+        
+        competitionsInfo$MonthYearDate <- sapply(X = competitionsInfo$Date, 
+                                                 FUN = dataPreparation$ParseDate
+                                                 ) %>% as.character()
+        
+        competitionsInfo <- competitionsInfo %>%
+            dplyr::filter(MonthYearDate == competitionDate) %>%
+            dplyr::arrange(Competition, Position) %>%
+            as.data.frame()
+        
+        return(competitionsInfo)
+    }
+    
+    
+    # ----------------------------------------
+    # Public method for spliting data frame of
+    # competitions into list of competitions
+    # ----------------------------------------
+    
+    dataPreparation$ToCompetitionList <- function(CompetitionsDataFrame)
+    {
+        if (!all(names(dataPreparation$RubiksCubeFinals) %in% names(CompetitionsDataFrame)))
+            stop("Given data frame does not have the same structure as <RubiksCubeFinals>.")
+        
+        
+        competitionNames <- unique(CompetitionsDataFrame$Competition) %>% sort()
+        
+        # Create list of competitions for given date and country
+        competitions <- list()
+        
+        for (competitionName in competitionNames)
+        {
+            competitions[[competitionName]] <- CompetitionsDataFrame %>% 
+                                                    dplyr::filter(Competition == competitionName) %>%
+                                                    as.data.frame()
+        }
+        
+        return(competitions)
+    }
+    
+    
     return(dataPreparation)    
     
 }
