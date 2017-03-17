@@ -9,7 +9,6 @@
 
 
 
-
 create_ReportGeneratorApp <- function(dataPrep, vController, reportDesigner)
 {
     
@@ -129,8 +128,3 @@ create_ReportGeneratorApp <- function(dataPrep, vController, reportDesigner)
     
     return(reportGenerator)
 }
-
-
-
-
-

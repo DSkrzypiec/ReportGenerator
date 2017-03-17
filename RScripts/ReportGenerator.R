@@ -6,6 +6,7 @@
 #   
 #   Main R script of this project.
 #   It start shiny-app for reports generation.
+#   which start shiny-app for reports generation.
 #
 # ---------------------------------------------
 
