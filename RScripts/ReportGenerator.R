@@ -5,11 +5,25 @@
 #   14.03.2017
 #   
 #   Main R script of this project.
-#   It contains only two lines of code
-#   which start shiny-app for reports generation.
+#   It start shiny-app for reports generation.
 #
 # ---------------------------------------------
 
 
+# Sourcing
+source("./RScripts/PackageLoading.R")
+source("./RScripts/DataPreparation.R")
+source("./RScripts/VersionController.R")
+source("./RScripts/ReportDesigner.R")
 source("./RScripts/ReportGenerator_UI.R")
-shiny::shinyApp(userInterface, server)
+
+
+# Create reportGenerator object
+vController <- create_VersionController()
+rGen <- create_ReportGeneratorApp(dataPrep       = create_dataPreparation(),
+                                  vController    = vController, 
+                                  reportDesigner = create_reportDesigner()
+                                  )
+
+# Run the Shiny App
+shiny::shinyApp(rGen$userInterface, rGen$server)
