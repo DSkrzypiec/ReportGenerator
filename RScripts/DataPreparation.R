@@ -61,13 +61,18 @@ create_dataPreparation <- function()
     
     
     
+    
     # ----------------------------------------
     # Reading main data
     # ----------------------------------------
     
     dataPreparation$RubiksCubeFinals <- .readRubiksCubeFinals()
     
-    
+    .countriesOrdered <- dataPreparation$RubiksCubeFinals %>%
+                                    dplyr::group_by(Country) %>%
+                                    dplyr::summarise(freq = n()) %>%
+                                    as.data.frame() %>%
+                                    dplyr::arrange(desc(freq))
     
     # ----------------------------------------
     # Public properties of countries and dates
@@ -79,7 +84,7 @@ create_dataPreparation <- function()
                                                               )
                                                       ) 
     
-    dataPreparation$CompetitionCountries    <- unique(dataPreparation$RubiksCubeFinals$Country)
+    dataPreparation$CompetitionCountries    <-  .countriesOrdered$Country
     
     
     # ----------------------------------------
