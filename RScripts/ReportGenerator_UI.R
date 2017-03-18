@@ -9,7 +9,7 @@
 
 
 
-create_ReportGeneratorApp <- function(dataPrep, vController, reportDesigner)
+create_ReportGeneratorApp <- function(dataPrep, vController)
 {
     
     if (class(dataPrep) != "dataPreparation")
@@ -18,8 +18,6 @@ create_ReportGeneratorApp <- function(dataPrep, vController, reportDesigner)
     if (class(vController) != "VersionController")
         stop("Argument <vController> should be of class 'VersionController'.")
     
-    if (class(reportDesigner) != "reportDesigner")
-        stop("Argument <reportDesigner> should be of class 'reportDesigner'")
     
     
     # Create a new object
@@ -100,21 +98,31 @@ create_ReportGeneratorApp <- function(dataPrep, vController, reportDesigner)
         output$info <- renderText({
             
             # Note new report version
-            if (input$ReportDates %>% length > 1)                           # It's for preventing from insernt empty params
+            if (input$ReportDates %>% nchar > 1)                           # It's for preventing from insernt empty params
             {
                 
-                
+                vController$SetUpEnv()
                 vController$AddVersion(ReportDate = input$ReportDates, 
                                        ReportCountry = input$ReportCountries, 
                                        Comment = input$ShortComment)
                 
-                # To be implemented.
-                generateReport <- function(ReportDate, ReportCountry)
-                {
-                    warning("Not implemented exception.")
-                }
+                vController$CreateReportCatalog(ReportDate    = input$ReportDates, 
+                                                ReportCountry = input$ReportCountries)
                 
-                generateReport(input$ReportDates, input$ReportCountries)
+                
+                # ---------------------------------------
+                # Generate Report
+                # ---------------------------------------
+                reportDesigner <- create_reportDesigner(dataPrep = dataPrep, 
+                                                        reportDate = input$ReportDates, 
+                                                        reportCountry = input$ReportCountries
+                                                        )
+                historyLog <- vController$ReadLog()
+                path <- vController$GetPaths(ReportDate = input$ReportDates, 
+                                             ReportCountry = input$ReportCountries, 
+                                             ReportId = historyLog$ReportId[nrow(historyLog)])
+                
+                reportDesigner$GenerateReport(path = paste0(path$reportPath, "/RubiksCubeFinalas.docx"))
                 
                 
                 print(paste0("Report has been generated for Date = [", input$ReportDates,

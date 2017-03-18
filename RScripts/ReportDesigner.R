@@ -30,7 +30,7 @@ create_reportDesigner <- function(dataPrep, reportDate, reportCountry)
         stop("Given argument <reportCountry> has incorrect type. Character was excepcted.")
     
     if (!reportCountry %in% dataPrep$CompetitionCountries)
-        stop(paste0("Given argument reportDate (", reportCountry, ") is invalid. There is not such a date in data."))
+        stop(paste0("Given argument reportCountry (", reportCountry, ") is invalid. There is not such a country in data."))
     
     
     # ----------------------------------------------------
@@ -82,7 +82,7 @@ create_reportDesigner <- function(dataPrep, reportDate, reportCountry)
     # Main public method generating report
     # ----------------------------------------------------
     
-    reportDesigner$GenerateReport <- function()
+    reportDesigner$GenerateReport <- function(path)
     {
         # Create empty report
         report = ReporteRs::docx(title = "Report")
@@ -95,7 +95,7 @@ create_reportDesigner <- function(dataPrep, reportDate, reportCountry)
             report = ReporteRs::addFlexTable(doc = report, ReporteRs::FlexTable(.getResult(competiton)))
         }
         
-        ReporteRs::writeDoc(doc = report, file = "test.docx")
+        ReporteRs::writeDoc(doc = report, file = path)
     }
     
     return(reportDesigner)

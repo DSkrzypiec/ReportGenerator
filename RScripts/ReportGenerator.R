@@ -22,8 +22,7 @@ source("./RScripts/ReportGenerator_UI.R")
 # Create reportGenerator object
 vController <- create_VersionController()
 rGen <- create_ReportGeneratorApp(dataPrep       = create_dataPreparation(),
-                                  vController    = vController, 
-                                  reportDesigner = create_reportDesigner()
+                                  vController    = vController
                                   )
 
 # Run the Shiny App
