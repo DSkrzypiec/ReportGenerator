@@ -101,7 +101,9 @@ create_ReportGeneratorApp <- function(dataPrep, vController)
             if (input$ReportDates %>% nchar > 1)                           # It's for preventing from insernt empty params
             {
                 
-                vController$SetUpEnv()
+                if (!"Results" %in% dir())
+                    vController$SetUpEnv()
+                
                 vController$AddVersion(ReportDate = input$ReportDates, 
                                        ReportCountry = input$ReportCountries, 
                                        Comment = input$ShortComment)
@@ -122,7 +124,8 @@ create_ReportGeneratorApp <- function(dataPrep, vController)
                                              ReportCountry = input$ReportCountries, 
                                              ReportId = historyLog$ReportId[nrow(historyLog)])
                 
-                reportDesigner$GenerateReport(path = paste0(path$reportPath, "/RubiksCubeFinalas.docx"))
+                reportDesigner$GenerateReport(path = paste0(path$reportPath, "/RubiksCubeFinalas.docx"), 
+                                              pathForObjects = path$rObjectsPath)
                 
                 
                 print(paste0("Report has been generated for Date = [", input$ReportDates,
