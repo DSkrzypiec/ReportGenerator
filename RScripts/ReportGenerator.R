@@ -21,7 +21,8 @@ source("./RScripts/ReportGenerator_UI.R")
 
 # Create reportGenerator object
 vController <- create_VersionController()
-rGen <- create_ReportGeneratorApp(dataPrep       = create_dataPreparation(),
+dataPrep    <- create_dataPreparation()
+rGen <- create_ReportGeneratorApp(dataPrep       = dataPrep,
                                   vController    = vController
                                   )
 
