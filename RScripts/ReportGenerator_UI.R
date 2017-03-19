@@ -104,33 +104,45 @@ create_ReportGeneratorApp <- function(dataPrep, vController)
                 if (!"Results" %in% dir())
                     vController$SetUpEnv()
                 
-                vController$AddVersion(ReportDate = input$ReportDates, 
-                                       ReportCountry = input$ReportCountries, 
-                                       Comment = input$ShortComment)
+                nobs <- nrow(dataPrep$FilterCompetitions(competitionDate = input$ReportDates,
+                                                         competitionCountry = input$ReportCountries)
+                             )
+                # Check if there is any data for given inputs
+                if (nobs > 0){
+                    vController$AddVersion(ReportDate = input$ReportDates, 
+                                           ReportCountry = input$ReportCountries, 
+                                           Comment = input$ShortComment)
+                    
+                    vController$CreateReportCatalog(ReportDate    = input$ReportDates, 
+                                                    ReportCountry = input$ReportCountries)
+                    
+                    
+                    # ---------------------------------------
+                    # Generate Report
+                    # ---------------------------------------
+                    reportDesigner <- create_reportDesigner(dataPrep = dataPrep, 
+                                                            reportDate = input$ReportDates, 
+                                                            reportCountry = input$ReportCountries
+                    )
+                    historyLog <- vController$ReadLog()
+                    path <- vController$GetPaths(ReportDate = input$ReportDates, 
+                                                 ReportCountry = input$ReportCountries, 
+                                                 ReportId = historyLog$ReportId[nrow(historyLog)])
+                    
+                    reportDesigner$GenerateReport(path = paste0(path$reportPath, "/RubiksCubeFinalas.docx"), 
+                                                  pathForObjects = path$rObjectsPath)
+                    
+                    
+                    print(paste0("Report has been generated for Date = [", input$ReportDates,
+                                 "] and Country = [", input$ReportCountries, "].")
+                    )
+                } else {
+                    print(paste0("There is not competitions for Date = [", input$ReportDates,
+                                 "] and Country = [", input$ReportCountries, "].")
+                        )
+                }
                 
-                vController$CreateReportCatalog(ReportDate    = input$ReportDates, 
-                                                ReportCountry = input$ReportCountries)
                 
-                
-                # ---------------------------------------
-                # Generate Report
-                # ---------------------------------------
-                reportDesigner <- create_reportDesigner(dataPrep = dataPrep, 
-                                                        reportDate = input$ReportDates, 
-                                                        reportCountry = input$ReportCountries
-                                                        )
-                historyLog <- vController$ReadLog()
-                path <- vController$GetPaths(ReportDate = input$ReportDates, 
-                                             ReportCountry = input$ReportCountries, 
-                                             ReportId = historyLog$ReportId[nrow(historyLog)])
-                
-                reportDesigner$GenerateReport(path = paste0(path$reportPath, "/RubiksCubeFinalas.docx"), 
-                                              pathForObjects = path$rObjectsPath)
-                
-                
-                print(paste0("Report has been generated for Date = [", input$ReportDates,
-                             "] and Country = [", input$ReportCountries, "].")
-                )
             }
   
         })
